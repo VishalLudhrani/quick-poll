@@ -116,7 +116,7 @@ const CreateNewPoll = () => {
   }
 
   return (
-    <div className="content-container mt-12">
+    <div className="content-container mt-12 lg:w-8/12 px-4">
       <div className="flex flex-col md:flex-row">
         <h1 className="text-4xl font-bold flex-auto my-auto">Create a new poll</h1>
         <div className="flex my-4 space-x-2 flex-auto"> {/* heading with the finish button */}
@@ -167,23 +167,22 @@ const CreateNewPoll = () => {
                           let inputElName = `option${pos + 1}`;
                           return (
                             <div key={pos} className="flex space-x-2"> {/* option element */}
-                              <span className="text-sm flex-auto my-auto">
+                              <div className="text-sm flex-1 my-auto">
                                 <ion-icon name="radio-button-off-outline"></ion-icon>  
-                              </span>
-                              <span className="flex-auto">
+                              </div>
+                              <div className="input-group flex-10">
                                 <input
                                   type="text"
                                   name={inputElName}
                                   onChange={e => debouncedHandleOptionChange(e, pos, questionPos)}
                                   className="input input-bordered w-full" />
-                              </span>
-                              {pos > 1 && (
-                                <span
-                                  onClick={() => deleteOption(pos, questionPos)}
-                                  className="flex-auto my-auto mx-auto px-2 text-sm text-center btn btn-error text-white">
-                                  <ion-icon name="trash-outline"></ion-icon>
-                                </span>
-                              )}
+                                  <button
+                                    onClick={() => deleteOption(pos, questionPos)}
+                                    disabled={!(pos > 1)}
+                                    className="my-auto mx-auto px-4 text-sm text-center btn btn-error text-white">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                  </button>
+                              </div>
                             </div>
                           );
                         })
