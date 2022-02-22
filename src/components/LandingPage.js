@@ -6,7 +6,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const onCreateBtnHandler = () => {
-    navigate("/poll/new");
+    navigate("/new");
   }
 
   return (

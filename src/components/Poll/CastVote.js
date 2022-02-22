@@ -1,44 +1,75 @@
+// import modules from dependencies
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+// import custom components, modules
+import { supabaseClient } from "../../App";
+
 const CastVote = () => {
 
-  const poll = {
-    pollName: "Test",
+  let { id } = useParams();
+
+  const [ poll, setPoll ] = useState({
+    pollName: "Dummy name",
+    voteToken: "Dummy token",
+    editToken: "Dummy edit token",
     questions: [
       {
-        value: "What's the best?",
+        value: "Dummy Question",
         options: [
           {
-            value: "Burger",
+            value: "Dummy option 1"
           },
           {
-            value: "Pizza",
-          },
-          {
-            value: "Salad",
-          },
-          {
-            value: "Veggies",
+            value: "Dummy option 2"
           },
         ]
-      },
-      {
-        value: "What's the worst?",
-        options: [
-          {
-            value: "Yippee",
-          },
-          {
-            value: "Maggi",
-          },
-          {
-            value: "Raymen Noodles",
-          },
-        ]
-      },
+      }
     ]
+  });
+  const [ isLoading, setIsLoading ] = useState(true);
+
+  useEffect(() => {
+    (async() => {
+      setIsLoading(true)
+      let { data } = await supabaseClient.from("poll").select("*, questions!questions_poll_id_fkey(*), options!options_poll_id_fkey(*)").eq("vote_token", id);
+      let parsedData = data[0];
+      console.log(parsedData);
+      updatePoll(parsedData);
+      setIsLoading(false);
+    })();
+  }, [id]);
+
+  const updatePoll = (parsedData) => {
+    setPoll(prevState => ({
+      ...prevState,
+      pollName: parsedData.name,
+      voteToken: parsedData.vote_token,
+      editToken: parsedData.edit_token,
+      questions: parsedData.questions.map(parsedQuestion => {
+        return {
+          value: parsedQuestion.value,
+          options: parsedData.options
+                              .filter(option => option.question_id === parsedQuestion.id)
+                              .map(option => ({id: option.id, value: option.value}))
+        }
+      })
+    }));
   }
 
   const voteHandler = e => {
     console.log(e.target.value);
+  }
+
+  if(isLoading === true) {
+    return (
+      <div className="flex h-[100vh]">
+        <div className="mx-auto my-auto">
+          <div className="radial-progress animate-spin mr-4 text-indigo-600" style={{['--value']: 20}}></div>
+          <span className="text-2xl font-bold">Fetching poll details...</span>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -52,8 +83,9 @@ const CastVote = () => {
               <div className="flex flex-col h-full space-y-2">
                 {
                   question.options.map((option, optionPos) => {
-                    return (
-                      <div
+                    if (option) {
+                      return (
+                        <div
                         key={optionPos}
                         className="flex-auto text-md font-medium uppercase tracking-wide px-8 py-4 rounded-lg my-auto space-x-2">
                         <input
@@ -69,7 +101,8 @@ const CastVote = () => {
                           </div>
                         </label>
                       </div>
-                    )
+                      )
+                    } else return <div></div>
                   })
                 }
               </div>
