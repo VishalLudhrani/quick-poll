@@ -12,7 +12,6 @@ const CastVote = () => {
   const [ poll, setPoll ] = useState({
     pollName: "Dummy name",
     voteToken: "Dummy token",
-    editToken: "Dummy edit token",
     questions: [
       {
         value: "Dummy Question",
@@ -45,7 +44,6 @@ const CastVote = () => {
       ...prevState,
       pollName: parsedData.name,
       voteToken: parsedData.vote_token,
-      editToken: parsedData.edit_token,
       questions: parsedData.questions.map(parsedQuestion => {
         return {
           value: parsedQuestion.value,

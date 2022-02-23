@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { nanoid } from 'nanoid';
 import { useDebouncedCallback } from "use-debounce";
+import { supabaseClient } from "../../App";
 
 const CreateNewPoll = () => {
 
   const initialState = {
     pollName: '',
-    pollToken: '',
+    voteToken: '',
     questions: [
       {
         value: '',
@@ -27,7 +28,7 @@ const CreateNewPoll = () => {
   useEffect(() => {
     setState(prevState => ({
       ...prevState,
-      pollToken: nanoid(6)
+      voteToken: nanoid(8)
     }));
   }, []);
 
@@ -92,7 +93,7 @@ const CreateNewPoll = () => {
       ...prevState,
       questions: prevState.questions.map((question, pos) => 
         pos === qPos
-          ? { ...question, options: [ ...question.options, { value: '' } ] }
+          ? { ...question, options: [ ...question.options, { id: nanoid(8), value: '' } ] }
           : { ...question }
       )
     }));
@@ -111,8 +112,59 @@ const CreateNewPoll = () => {
     });
   }
 
-  const createPoll = () => {
-    console.log(state);
+  const createPoll = async() => {
+    // store basic details
+    const { data: pollData, error: pollError } = await supabaseClient
+                                  .from("poll")
+                                  .insert([
+                                    {
+                                      name: state.pollName,
+                                      vote_token: state.voteToken
+                                    },
+                                  ]);
+    if (pollError) {
+      alert(`An error occured\n${pollError}\nPlease reload the page and try again.`);
+    }
+
+    // store questions
+    let parsedData = pollData[0];
+    const { data: questionData, error: questionError } = await supabaseClient
+                                                                .from("questions")
+                                                                .insert(
+                                                                  state.questions.map(question => {
+                                                                    return {
+                                                                      poll_id: parsedData.id,
+                                                                      value: question.value
+                                                                    }
+                                                                  })
+                                                                );
+    if(questionError) {
+      alert(`An error occured\n${questionError}\nPlease reload the page and try again.`);
+    }
+
+    // store options
+    const { data: optionsData, error: optionsError } = await supabaseClient
+                                                              .from("options")
+                                                              .insert(
+                                                                state.questions.map((question, pos) => {
+                                                                  let storedQuestion = questionData[pos];
+                                                                  return question.options.map(option => {
+                                                                    return {
+                                                                      poll_id: parsedData.id,
+                                                                      question_id: storedQuestion.id,
+                                                                      value: option.value
+                                                                    }
+                                                                  })
+                                                                }).flat()
+                                                              )
+    if (optionsError) {
+      alert(`An error occured\n${optionsError}\nPlease reload the page and try again.`);
+    }
+  }
+
+  const handleCopyClipboard = () => {
+    navigator.clipboard.writeText(process.env.REACT_APP_WEBSITE_URL + "/" + state.voteToken);
+    document.querySelector('#snackbar').classList.remove('hidden');
   }
 
   return (
@@ -121,7 +173,26 @@ const CreateNewPoll = () => {
         <h1 className="text-4xl font-bold flex-auto my-auto">Create a new poll</h1>
         <div className="flex my-4 space-x-2 flex-auto"> {/* heading with the finish button */}
           <div className="btn btn-outline btn-primary flex-auto" onClick={debouncedAddQuestion}>Add another question</div>
-          <div className="btn btn-success flex-auto" onClick={createPoll}>Create poll</div>
+          <a href="#success-modal" className="btn btn-success flex-auto" onClick={createPoll}>Create poll</a>
+        </div>
+      </div>
+      <div className="modal" id="success-modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Poll created!</h3>
+          <p className="py-4">{process.env.REACT_APP_WEBSITE_URL + "/" + state.voteToken}</p>
+          <a href="#" className="btn btn-outline btn-primary" onClick={handleCopyClipboard}>Copy to clipboard</a>
+          <div className="modal-action">
+            <a href="#" className="btn btn-outline btn-primary">Close</a>
+          </div>
+        </div>
+      </div>
+      <div id="snackbar" className="alert shadow-lg alert-info hidden">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Poll link copied to clipboard!</span>
+        </div>
+        <div className="flex-none">
+          <button className="btn btn-sm" onClick={() => {navigator.clipboard.writeText(process.env.REACT_APP_WEBSITE_URL + "/" + state.voteToken);}}>Copy again</button>
         </div>
       </div>
       <div className="form-control"> {/* questions container */}
@@ -133,14 +204,6 @@ const CreateNewPoll = () => {
               name="question"
               onChange={e => {debouncedSetState("pollName", e.target.value)}}
               className="input input-bordered w-full" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold">
-              Your poll token is {state.pollToken ? (
-                <code className="bg-indigo-600">{state.pollToken}</code>
-              ) : "loading..."}
-            </h3>
-            <p className="text-lg">This token will be used as a password when you need to edit your poll. Kindly keep this safe with you.</p>
           </div>
           {
             state.questions.map((question, questionPos) => {
