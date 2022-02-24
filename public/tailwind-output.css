@@ -2947,6 +2947,14 @@ html {
   width: 1.5rem;
 }
 
+.w-\[50vw\] {
+  width: 50vw;
+}
+
+.w-\[25vw\] {
+  width: 25vw;
+}
+
 .flex-auto {
   flex: 1 1 auto;
 }
