@@ -114,7 +114,7 @@ const CastVote = () => {
     return (
       <div className="flex h-[100vh]">
         <div className="mx-auto my-auto">
-          <div className="radial-progress animate-spin mr-4 text-indigo-600" style={{['--value']: 20}}></div>
+          <div className="radial-progress animate-spin mr-4 text-indigo-600" style={{'--value': 20}}></div>
           <span className="text-2xl font-bold">Fetching poll details...</span>
         </div>
       </div>
