@@ -220,7 +220,7 @@ const CreateNewPoll = () => {
         <div id="snackbar1" className="alert shadow-lg alert-info">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Poll link: <a style={{ backgroundColor: "#222", borderRadius: "8px", padding: "4px" }} href={process.env.REACT_APP_WEBSITE_URL + "/vote/" + state.voteToken}>{process.env.REACT_APP_WEBSITE_URL}/vote/{state.voteToken}</a></span>
+            <span>Poll link: <a style={{ backgroundColor: "#eee", borderRadius: "8px", padding: "4px", color: "#222" }} href={process.env.REACT_APP_WEBSITE_URL + "/vote/" + state.voteToken} target="_blank" rel="noreferrer">{process.env.REACT_APP_WEBSITE_URL}/vote/{state.voteToken}</a></span>
           </div>
           <div className="flex-none">
             <button className="btn btn-sm" onClick={() => {handleCopyClipboard("vote")}}>Copy link</button>
@@ -230,7 +230,7 @@ const CreateNewPoll = () => {
         <div id="snackbar2" className="alert shadow-lg alert-info">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Poll results: <a style={{ backgroundColor: "#222", borderRadius: "8px", padding: "4px" }} href={process.env.REACT_APP_WEBSITE_URL + "/result/" + state.voteToken}>{process.env.REACT_APP_WEBSITE_URL}/result/{state.voteToken}</a></span>
+            <span>Poll results: <a style={{ backgroundColor: "#eee", borderRadius: "8px", padding: "4px", color: "#222" }} href={process.env.REACT_APP_WEBSITE_URL + "/result/" + state.voteToken} target="_blank" rel="noreferrer">{process.env.REACT_APP_WEBSITE_URL}/result/{state.voteToken}</a></span>
           </div>
           <div className="flex-none">
             <button className="btn btn-sm" onClick={() => {handleCopyClipboard("result")}}>Copy link</button>

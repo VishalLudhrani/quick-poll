@@ -2851,12 +2851,12 @@ html {
   margin-top: 3rem;
 }
 
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
 }
 
 .flex {
