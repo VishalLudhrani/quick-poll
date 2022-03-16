@@ -28,6 +28,7 @@ const Result = () => {
     ]
   });
   const [ pollID, setPollID ] = useState(null);
+  const [ votersCount, setVotersCount ] = useState(0);
 
   const fetchPollDetails = useCallback(
     async() => {
@@ -35,6 +36,7 @@ const Result = () => {
       updatePoll(data[0]);
       setPollID(data[0].id);
       setIsLoading(false);
+      setVotersCount(data[0].result.length / data[0].questions.length);
     },
     [id]
   )
@@ -89,6 +91,7 @@ const Result = () => {
   return (
     <div className="content-container mt-12 lg:w-8/12 px-2 md:px-4 space-y-8">
       <h1 className="text-4xl font-bold">{poll.pollName} - poll results</h1>
+      <h2 className="text-2xl font-black">Total voters - {votersCount}</h2>
       {
         poll.questions.map((question, pos) => {
           return (
@@ -104,7 +107,7 @@ const Result = () => {
                       className="flex-auto text-md text-indigo-400 font-normal px-8 py-4 rounded-lg my-auto">
                         <div style={{position: "relative"}}>
                           <div style={{position: "asbolute", zIndex: 1}} className="px-4 py-2">
-                            <span>{option.value} ({optionContainerWidth}%)</span>
+                            <span>{option.value} <span className="font-bold">({option.votes})</span></span>
                           </div>
                           <div style={{position: "absolute", zIndex: -1, top: 0}} className="w-full">
                             <div style={{position: "relative"}}>
