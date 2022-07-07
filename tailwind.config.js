@@ -1,5 +1,7 @@
-module.exports = {
-  content: ["./src/**/*.{html,js}"],
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+module.exports = withMT({
+  content: ["./src/**/*.{html,js,jsx}"],
   theme: {
     extend: {
       flex: {
@@ -9,7 +11,6 @@ module.exports = {
     },
   },
   plugins: [
-    require("@tailwindcss/forms"),
-    require("daisyui")
+    require("@tailwindcss/forms")
   ],
-}
+})
