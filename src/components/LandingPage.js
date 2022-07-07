@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
+import Jumbotron from "./common/Jumbotron";
 
 const LandingPage = () => {
 
@@ -13,11 +14,12 @@ const LandingPage = () => {
   return (
     <>
       <div className="App">
-        <div className="content-container">
-          <h1 className="text-7xl font-black md:text-9xl">Quick Poll</h1>
-          <p className="text-2xl font-thin md:text-4xl">A quick, open poll creator. View your poll results live. No limit on number of questions per poll. Create poll without signing in.</p>
-          <Button onClick={onCreateBtnHandler}>Create poll</Button>
-        </div>
+        <Jumbotron>
+          <Typography variant="h1" as="h1">Quick Poll</Typography>
+          <Typography variant="h3" as="h3" className="mt-4">A simple poll creator for community managers.</Typography>
+          <Typography variant="lead" as="h6" className="my-4">A medium for community interaction, achieving productivity with polls, providing insights that serve your community.</Typography>
+          <Button onClick={onCreateBtnHandler} size="lg" className="normal-case" variant="gradient">Create Poll</Button>
+        </Jumbotron>
       </div>
     </>
   );
