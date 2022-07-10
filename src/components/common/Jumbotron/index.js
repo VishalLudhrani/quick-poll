@@ -13,7 +13,7 @@ Jumbotron.defaultProps = {
 }
 
 Jumbotron.propTypes = {
-  children: PropTypes.elementType.isRequired,
+  children: PropTypes.element.isRequired,
   className: PropTypes.string,
 }
 

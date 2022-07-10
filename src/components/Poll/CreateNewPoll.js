@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid';
 import { useDebouncedCallback } from "use-debounce";
 import { supabaseClient } from "../../App";
 import isEqual from "lodash.isequal";
+import HeaderLayout from "../../layouts/HeaderLayout";
+import { Button, Input } from "@material-tailwind/react";
 
 const CreateNewPoll = () => {
 
@@ -169,19 +171,18 @@ const CreateNewPoll = () => {
   }
 
   return (
-    <div className="content-container mt-12 lg:w-8/12 px-4">
-      <div className="flex flex-col md:flex-row">
-        <h1 className="text-4xl font-bold flex-auto my-auto">Create a new poll</h1>
-        <div className="flex my-4 space-x-2 flex-auto"> {/* heading with the finish button */}
-          <button
-            className="btn btn-outline btn-primary flex-auto"
+    <HeaderLayout 
+      title="Create a new poll"
+      sideMenu={
+        <>
+          <Button
             onClick={debouncedAddQuestion}
             disabled={isCreated}
+            variant="outlined"
           >
             Add another question
-          </button>
-          <button 
-            className="btn btn-success flex-auto"
+          </Button>
+          <Button
             onClick={
               () => {
                 createPoll();
@@ -191,11 +192,13 @@ const CreateNewPoll = () => {
               }
             }
             disabled={isCreated}
+            variant="filled"
           >
             Create poll
-          </button>
-        </div>
-      </div>
+          </Button>
+        </>
+      }
+    >
       <div className="modal" id="success-modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Your poll was created!</h3>
@@ -237,15 +240,16 @@ const CreateNewPoll = () => {
           </div>
         </div>
       </div>
-      <div id="questions" className="form-control"> {/* questions container */}
+      <div id="questions"> {/* questions container */}
         <div className="space-y-4"> {/* question element */}
           <div className="space-y-2"> {/* poll details */}
             <h4 className="text-xl font-bold">Set a suitable name for your poll:</h4>
-            <input
+            <Input
               type="text"
+              label="Poll name"
               name="question"
               onChange={e => {debouncedSetState("pollName", e.target.value)}}
-              className="input input-bordered w-full" />
+              className="w-full" />
           </div>
           {
             state.questions.map((question, questionPos) => {
@@ -301,7 +305,7 @@ const CreateNewPoll = () => {
           }
         </div>
       </div>
-    </div>
+    </HeaderLayout>
   );
 };
 

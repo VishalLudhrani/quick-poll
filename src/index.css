@@ -9,7 +9,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Epilogue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(45deg, #e0f7fa, #e1f5fe);
   height: 100vh;
 }
 
