@@ -249,7 +249,7 @@ const CreateNewPoll = () => {
               label="Poll name"
               name="question"
               onChange={e => {debouncedSetState("pollName", e.target.value)}}
-              className="w-full" />
+              className="w-full focus:ring-0" />
           </div>
           {
             state.questions.map((question, questionPos) => {
