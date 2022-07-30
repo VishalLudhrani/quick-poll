@@ -4,8 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 
 // import styles, and/or components
-import './App.css';
-import LandingPage from './components/LandingPage';
+import LandingPage from './pages/LandingPage';
 import CastVote from './components/Poll/CastVote';
 import CreateNewPoll from './components/Poll/CreateNewPoll';
 import Result from './components/Poll/Result';
@@ -13,7 +12,6 @@ import Result from './components/Poll/Result';
 export const supabaseClient = createClient(process.env.REACT_APP_SUPABASE_PROJECT_URL, process.env.REACT_APP_SUPABASE_ANON_KEY);
 
 const App = () => {
-
   return (
     <BrowserRouter>
       <Routes>

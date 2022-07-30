@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;600&display=swap');
-
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Epilogue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;

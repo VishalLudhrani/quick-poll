@@ -1,20 +1,21 @@
+import { Container } from "@mui/material";
 import PropTypes from "prop-types";
 
-const Jumbotron = ({ className, children }) => {
+const Jumbotron = ({ sx, children }) => {
   return (
-    <div className={"mx-auto sm:w-8/12 p-4 mt-8 w-full" + className}>
+    <Container sx={sx}>
       {children}
-    </div>
+    </Container>
   )
 }
 
 Jumbotron.defaultProps = {
-  className: "",
+  sx: {},
 }
 
 Jumbotron.propTypes = {
   children: PropTypes.element.isRequired,
-  className: PropTypes.string,
+  sx: PropTypes.object,
 }
 
 export default Jumbotron;
