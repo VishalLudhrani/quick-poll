@@ -4,7 +4,6 @@ import { useDebouncedCallback } from "use-debounce";
 import { supabaseClient } from "../../App";
 import isEqual from "lodash.isequal";
 import HeaderLayout from "../../layouts/HeaderLayout";
-import { Button, Input } from "@material-tailwind/react";
 
 const CreateNewPoll = () => {
 
@@ -175,14 +174,13 @@ const CreateNewPoll = () => {
       title="Create a new poll"
       sideMenu={
         <>
-          <Button
+          <button
             onClick={debouncedAddQuestion}
             disabled={isCreated}
-            variant="outlined"
           >
             Add another question
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={
               () => {
                 createPoll();
@@ -192,10 +190,9 @@ const CreateNewPoll = () => {
               }
             }
             disabled={isCreated}
-            variant="filled"
           >
             Create poll
-          </Button>
+          </button>
         </>
       }
     >
@@ -244,7 +241,7 @@ const CreateNewPoll = () => {
         <div className="space-y-4"> {/* question element */}
           <div className="space-y-2"> {/* poll details */}
             <h4 className="text-xl font-bold">Set a suitable name for your poll:</h4>
-            <Input
+            <input
               type="text"
               label="Poll name"
               name="question"
