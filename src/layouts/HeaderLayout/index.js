@@ -1,27 +1,33 @@
+import { Container, Grid, Typography } from "@mui/material";
 import PropTypes from "prop-types";
-import Container from "../../components/common/Container";
 
-const HeaderLayout = ({ title, sideMenu, children, className }) => {
+const HeaderLayout = ({ title, sideMenu, children, sx }) => {
   return (
-    <Container className={className}>
-      <div className="flex items-center justify-between">
-        <p>{title}</p>
-        <div className="flex items-center justify-end gap-x-4">{sideMenu}</div>
-      </div>
-      <div className="mt-4">{children}</div>
+    <Container sx={{
+      ...sx,
+      mt: 4,
+      py: 2
+    }}>
+      <Grid container alignItems="center" mb={4}>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="h3" component="h1">{title}</Typography>
+        </Grid>
+        <Grid item container xs={12} sm={6} justifyContent="flex-end" sx={{ gap: 2 }}>{sideMenu}</Grid>
+      </Grid>
+      {children}
     </Container>
   )
 }
 
 HeaderLayout.defaultProps = {
-  className: "",
+  sx: {},
 }
 
 HeaderLayout.propTypes = {
   title: PropTypes.string.isRequired,
   sideMenu: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,
-  className: PropTypes.string,
+  sx: PropTypes.object,
 }
 
 export default HeaderLayout;

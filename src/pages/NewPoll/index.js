@@ -4,8 +4,11 @@ import { useDebouncedCallback } from "use-debounce";
 import { supabaseClient } from "../../App";
 import isEqual from "lodash.isequal";
 import HeaderLayout from "../../layouts/HeaderLayout";
-import { Button } from "@material-tailwind/react";
 import NewPollForm from "../../components/forms/NewPollForm";
+import { Alert, Button, IconButton, Typography } from "@mui/material";
+import Modal from "../../components/common/Modal";
+import { LoadingButton } from "@mui/lab";
+import { ContentCopy, OpenInNew } from "@mui/icons-material";
 
 const NewPoll = () => {
 
@@ -29,6 +32,8 @@ const NewPoll = () => {
   
   const [state, setState] = useState(initialState);
   const [ isCreated, setIsCreated ] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const debouncedSetState = useDebouncedCallback((key, value) => {
     setState(prevState => ({
@@ -114,6 +119,8 @@ const NewPoll = () => {
     if (isEqual(initialState, state)) {
       alert("Kindly fill in all the details and then proceed!");
     } else {
+      setIsCreated(true);
+      setLoading(true);
       // store basic details
       const { data: pollData, error: pollError } = await supabaseClient
                                                     .from("poll")
@@ -160,9 +167,11 @@ const NewPoll = () => {
                                               )
       if (optionsError) {
         alert(`An error occured\n${optionsError}\nPlease reload the page and try again.`);
+      } else {
+        setShowDialog(true);
       }
   
-      setIsCreated(true);
+      setLoading(false);
     }
 
   }
@@ -180,77 +189,91 @@ const NewPoll = () => {
             onClick={debouncedAddQuestion}
             disabled={isCreated}
             variant="outlined"
+            sx={{ display: { xs: "none", sm: "block" } }}
           >
             Add another question
           </Button>
-          <Button
-            onClick={
-              () => {
-                createPoll();
-                if (!isEqual(initialState, state)) {
-                  window.location.href="#success-modal"
-                }
-              }
-            }
+          <LoadingButton
+            onClick={createPoll}
             disabled={isCreated}
-            variant="filled"
+            variant="contained"
+            loading={loading}
+            sx={{ display: { xs: "none", sm: "block" } }}
           >
             Create poll
-          </Button>
+          </LoadingButton>
         </>
       }
     >
-      <div className="modal" id="success-modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Your poll was created!</h3>
-          <div className="modal-action">
-            <button
-              onClick={
-                () => {
-                  window.location.href = "#";
-                  document.querySelector('#questions').classList.add('hidden');
-                  document.querySelector('#poll-links').classList.remove('hidden');
-                }
-              } 
-              className="btn btn-outline btn-primary"
+      <> {/* questions container */}
+        {!isCreated ? (
+          <NewPollForm
+            questions={state.questions}
+            onPollNameChange={debouncedSetState}
+            onQuestionChange={debouncedHandleQuestionChange}
+            onOptionChange={debouncedHandleOptionChange}
+            addOption={addOption}
+            deleteOption={deleteOption}
+          />
+        ) : (
+          <>
+            <Alert
+              severity="info"
+              action={
+                <Button 
+                  startIcon={<ContentCopy fontSize="small" />}
+                  onClick={() => handleCopyClipboard("vote")}
+                >
+                  Copy poll link
+                </Button>
+              }
+              sx={{ my: 1 }}
             >
-                Close
-              </button>
-          </div>
-        </div>
-      </div>
-      <div id="poll-links" className="hidden">
-        <h2 className="text-xl font-bold mb-2">Your poll was created successfully!</h2>
-        <div id="snackbar1" className="alert shadow-lg alert-info">
-          <div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Poll link: <a style={{ backgroundColor: "#eee", borderRadius: "8px", padding: "4px", color: "#222" }} href={process.env.REACT_APP_WEBSITE_URL + "/vote/" + state.voteToken} target="_blank" rel="noreferrer">{process.env.REACT_APP_WEBSITE_URL}/vote/{state.voteToken}</a></span>
-          </div>
-          <div className="flex-none">
-            <button className="btn btn-sm" onClick={() => {handleCopyClipboard("vote")}}>Copy link</button>
-          </div>
-        </div>
-        <br />
-        <div id="snackbar2" className="alert shadow-lg alert-info">
-          <div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span>Poll results: <a style={{ backgroundColor: "#eee", borderRadius: "8px", padding: "4px", color: "#222" }} href={process.env.REACT_APP_WEBSITE_URL + "/result/" + state.voteToken} target="_blank" rel="noreferrer">{process.env.REACT_APP_WEBSITE_URL}/result/{state.voteToken}</a></span>
-          </div>
-          <div className="flex-none">
-            <button className="btn btn-sm" onClick={() => {handleCopyClipboard("result")}}>Copy link</button>
-          </div>
-        </div>
-      </div>
-      <div id="questions"> {/* questions container */}
-        <NewPollForm
-          questions={state.questions}
-          onPollNameChange={debouncedSetState}
-          onQuestionChange={debouncedHandleQuestionChange}
-          onOptionChange={debouncedHandleOptionChange}
-          addOption={addOption}
-          deleteOption={deleteOption}
-        />
-      </div>
+              View Poll <a href={`${process.env.REACT_APP_WEBSITE_URL}/vote/${state.voteToken}`} target="_blank" rel="noreferrer"><IconButton><OpenInNew color="primary" fontSize="small" /></IconButton></a>
+            </Alert>
+            <Alert
+              severity="info"
+              action={
+                <Button 
+                  startIcon={<ContentCopy fontSize="small" />}
+                  onClick={() => handleCopyClipboard("result")}
+                >
+                  Copy result link
+                </Button>
+              }
+              sx={{ my: 1 }}
+            >
+              View results <a href={`${process.env.REACT_APP_WEBSITE_URL}/result/${state.voteToken}`} target="_blank" rel="noreferrer"><IconButton><OpenInNew color="primary" fontSize="small" /></IconButton></a>
+            </Alert>
+          </>
+        )}
+        <Button
+          onClick={debouncedAddQuestion}
+          disabled={isCreated}
+          variant="outlined"
+          sx={{ display: { xs: "block", sm: "none" }, mt: 4 }}
+          fullWidth
+        >
+          Add another question
+        </Button>
+        <LoadingButton
+          onClick={createPoll}
+          disabled={isCreated}
+          variant="contained"
+          loading={loading}
+          sx={{ display: { xs: "block", sm: "none" }, mt: 2 }}
+          fullWidth
+        >
+          Create poll
+        </LoadingButton>
+        <Modal
+          title="Poll created"
+          open={showDialog}
+          onClose={() => {setShowDialog(false)}}
+        >
+          <Typography variant="body1">Your poll was created</Typography>
+        </Modal>
+      </>
     </HeaderLayout>
   );
 };

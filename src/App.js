@@ -5,9 +5,9 @@ import { createClient } from '@supabase/supabase-js';
 
 // import styles, and/or components
 import LandingPage from './pages/LandingPage';
-import CastVote from './components/Poll/CastVote';
-import CreateNewPoll from './components/Poll/CreateNewPoll';
-import Result from './components/Poll/Result';
+import CastVote from './pages/CastVote';
+import Result from './pages/Result';
+import NewPoll from './pages/NewPoll';
 
 export const supabaseClient = createClient(process.env.REACT_APP_SUPABASE_PROJECT_URL, process.env.REACT_APP_SUPABASE_ANON_KEY);
 
@@ -16,7 +16,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<LandingPage />} />
-        <Route path='/new' element={<CreateNewPoll />} />
+        <Route path='/new' element={<NewPoll />} />
         <Route path='/vote/:id' element={<CastVote />} />
         <Route path='/result/:id' element={<Result />} />
       </Routes>
