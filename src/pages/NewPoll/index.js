@@ -20,9 +20,11 @@ const NewPoll = () => {
         value: '',
         options: [
           {
+            id: nanoid(8),
             value: '',
           },
           {
+            id: nanoid(8),
             value: '',
           },
         ],
@@ -105,13 +107,15 @@ const NewPoll = () => {
   const deleteOption = (optionPos, questionPos) => {
     const temp = [ ...state.questions[questionPos].options ];
     temp.splice(optionPos, 1);
-    setState({
-      ...state,
-      questions: state.questions.map((question, pos) => 
-        pos === questionPos
-          ? { ...question, options: temp }
-          : { ...question }
-      )
+    setState(prevState => {
+      return {
+        ...prevState,
+        questions: prevState.questions.map((question, pos) => 
+          pos === questionPos
+            ? { ...question, options: temp }
+            : { ...question }
+        )
+      }
     });
   }
 

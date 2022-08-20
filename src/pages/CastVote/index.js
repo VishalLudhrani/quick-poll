@@ -1,9 +1,11 @@
 // import modules from dependencies
-import { useEffect, useState } from "react";
+import { Backdrop, Box, Button, CircularProgress, Container, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // import custom components, modules
 import { supabaseClient } from "../../App";
+import Modal from "../../components/common/Modal";
 
 const CastVote = () => {
 
@@ -33,6 +35,7 @@ const CastVote = () => {
     optionID: null
   }]);
   const [ submitBtnDisabled, setSubmitBtnDisabled ] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
     (async() => {
@@ -77,14 +80,14 @@ const CastVote = () => {
     );
   }
 
-  const voteHandler = (option, question, pos) => {
+  const voteHandler = (optionID, question, pos) => {
     setResult(prevResult => (
       prevResult.map((prev, i) => 
         pos === i
           ? {
               ...prev,
               questionID: question.id,
-              optionID: option.id
+              optionID: parseInt(optionID)
             }
           : { ...prev }
       )
@@ -112,65 +115,75 @@ const CastVote = () => {
 
   if(isLoading === true) {
     return (
-      <div className="flex h-[100vh]">
-        <div className="mx-auto my-auto">
-          <div className="radial-progress animate-spin mr-4 text-indigo-600" style={{'--value': 20}}></div>
-          <span className="text-2xl font-bold">Fetching poll details...</span>
-        </div>
-      </div>
+      <Backdrop open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
     )
   }
 
   return (
-    <div className="content-container mt-12 lg:w-8/12 px-2 md:px-4 space-y-8">
-      <div className="modal" id="success-modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Your vote was casted, thank you for participating!</h3>
-          <div className="modal-action">
-            <a href="/" className="btn btn-outline btn-primary">Close</a>
-          </div>
-        </div>
-      </div>
-      <h1 className="text-4xl font-bold">{poll.pollName}</h1>
+    <Container sx={{ mt: 4, py: 2 }}>
+      <Typography variant="h4" gutterBottom>{poll.pollName}</Typography>
       {
         poll.questions.map((question, pos) => {
+          const selectedOption = result.find(item => item.questionID === question.id)?.optionID;
           return (
-            <div key={pos} className="space-y-4">
-              <h2 className="text-2xl font-semibold">Q{pos+1}. {question.value}</h2>
-              <div className="flex flex-col h-full space-y-2">
-                {
-                  question.options.map((option, optionPos) => {
-                    if (option) {
-                      return (
-                        <div
-                        key={optionPos}
-                        className="flex-auto text-md font-medium uppercase tracking-wide px-8 py-4 rounded-lg my-auto space-x-2">
-                        <input
-                          type="radio"
-                          name={`question${pos}`}
-                          id={`${pos}.${optionPos}`}
-                          value={option.value}
-                          onClick={() => {voteHandler(option, question, pos)}}
-                          className="hidden peer" />
-                        <label htmlFor={`${pos}.${optionPos}`} className="flex gap-4 p-4 rounded-lg bg-opacity-90 border-2 border-indigo-600 hover:bg-opacity-75 peer-checked:bg-indigo-600 peer-checked:text-white cursor-pointer transition">
-                          <div>
-                            <span>{option.value}</span>
-                          </div>
-                        </label>
-                      </div>
-                      )
-                    } else return <div></div>
-                  })
-                }
-              </div>
-            </div>
+            <React.Fragment key={pos}>
+              <Typography variant="h6">Q{pos+1}. {question.value}</Typography>
+              <FormControl fullWidth>
+                <RadioGroup
+                  value={selectedOption ?? ''}
+                  onChange={e => {voteHandler(e.target.value, question, pos)}}
+                >
+                  {
+                    question.options.map(option => (
+                      <FormControlLabel 
+                        key={option.id} 
+                        value={option.id} 
+                        control={<Radio sx={{ display: "none" }} />} 
+                        label={option.value}
+                        sx={{
+                          mt: 1,
+                          mx: 0,
+                          pl: 2,
+                          py: 1,
+                          border: "1px solid blue",
+                          borderRadius: 1,
+                          backgroundColor: selectedOption === option.id ? "skyblue" : "transparent",
+                        }}
+                      />
+                    ))
+                  }
+                </RadioGroup>
+              </FormControl>
+            </React.Fragment>
           )
         })
       }
-      <div className="flex">
-        <a href="#success-modal" className="btn btn-success w-[25vw] mx-auto" onClick={submitResult} disabled={submitBtnDisabled}>Submit</a>
-      </div>
-    </div>
+      <Box sx={{ textAlign: "center" }}>
+        <Button 
+          onClick={() => {
+            submitResult();
+            setShowDialog(true);
+          }} 
+          disabled={submitBtnDisabled} 
+          sx={{ mt: 2, width: "8em" }}
+          variant="contained"
+        >
+          Submit
+        </Button>
+      </Box>
+      <Modal 
+        open={showDialog}
+        onClose={() => {
+          setShowDialog(false);
+          window.location.href = "/"
+        }}
+        title="Your vote was casted"
+      >
+        Thank you for participating!
+      </Modal>
+    </Container>
   );
 };
 
