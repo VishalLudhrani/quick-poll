@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
+import { Backdrop, Box, CircularProgress, Container, Typography } from "@mui/material";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { supabaseClient } from "../../App";
 
@@ -79,53 +80,57 @@ const Result = () => {
 
   if(isLoading) {
     return (
-      <div className="flex h-[100vh]">
-        <div className="mx-auto my-auto">
-          <div className="radial-progress animate-spin mr-4 text-indigo-600" style={{'--value': 20}}></div>
-          <span className="text-2xl font-bold">Fetching poll details...</span>
-        </div>
-      </div>
+      <Backdrop
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     )
   }
 
   return (
-    <div className="content-container mt-12 lg:w-8/12 px-2 md:px-4 space-y-8">
-      <h1 className="text-4xl font-bold">{poll.pollName} - poll results</h1>
-      <h2 className="text-2xl font-black">Total voters - {votersCount}</h2>
+    <Container sx={{ mt: 4, py: 2 }}>
+      <Typography variant="h4" gutterBottom>{poll.pollName} - poll results</Typography>
+      <Typography variant="h5" gutterBottom>Total voters - {votersCount}</Typography>
       {
         poll.questions.map((question, pos) => {
           return (
-            <div key={pos} className="space-y-4">
-              <h2 className="text-2xl font-semibold">Q{pos+1}. {question.value}</h2>
-              <div className="flex flex-col h-full space-y-2">
-                {
-                  question.options.map((option, optionPos) => {
-                    let optionContainerWidth = question.totalVotes === 0 ? 0 : Math.round(option.votes/question.totalVotes*100);
-                    return (
-                      <div
+            <React.Fragment key={pos}>
+              <Typography variant="h6" mt={2} gutterBottom>Q{pos+1}. {question.value}</Typography>
+              {
+                question.options.map((option, optionPos) => {
+                  let optionContainerWidth = question.totalVotes === 0 ? 0 : Math.round(option.votes/question.totalVotes*100);
+                  return (
+                    <Box
                       key={optionPos}
-                      className="flex-auto text-md text-indigo-400 font-normal px-8 py-4 rounded-lg my-auto">
-                        <div style={{position: "relative"}}>
-                          <div style={{position: "asbolute", zIndex: 1}} className="px-4 py-2">
-                            <span>{option.value} <span className="font-bold">({option.votes})</span></span>
-                          </div>
-                          <div style={{position: "absolute", zIndex: -1, top: 0}} className="w-full">
-                            <div style={{position: "relative"}}>
-                              <div className="rounded-lg bg-indigo-200 h-10 my-auto" style={{zIndex: 0, width: `${optionContainerWidth}%`}}></div>
-                              <div className="border-indigo-600 border-2 h-10 rounded-lg my-auto w-full" style={{zIndex: 1, position: "absolute", top: 0}}></div>
-                            </div>
+                      sx={{
+                        px: 2,
+                        py: 1,
+                        border: "1px solid blue",
+                        borderRadius: 1,
+                        my: 1,
+                      }}
+                      className="flex-auto text-md text-indigo-400 font-normal px-8 py-4 rounded-lg my-auto"
+                    >
+                      <div style={{ position: "relative" }}>
+                        <div style={{ position: "asbolute", zIndex: 1 }} className="px-4 py-2">
+                          <span>{option.value} <span className="font-bold">({option.votes})</span></span>
+                        </div>
+                        <div style={{ position: "absolute", zIndex: -1, top: 0, width: "100%" }}>
+                          <div style={{ position: "relative", margin: "-9px -16px" }}>
+                            <div style={{ zIndex: 0, width: `${optionContainerWidth}%`, backgroundColor: "skyblue", height: "2.25em", borderRadius: "4px" }}></div>
                           </div>
                         </div>
-                    </div>
-                    )
-                  })
-                }
-              </div>
-            </div>
+                      </div>
+                  </Box>
+                  )
+                })
+              }
+            </React.Fragment>
           )
         })
       }
-    </div>
+    </Container>
   );
 };
 
