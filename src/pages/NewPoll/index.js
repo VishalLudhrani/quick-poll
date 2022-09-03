@@ -14,17 +14,17 @@ const NewPoll = () => {
 
   const initialState = {
     pollName: '',
-    voteToken: nanoid(8),
+    voteToken: nanoid(),
     questions: [
       {
         value: '',
         options: [
           {
-            id: nanoid(8),
+            id: nanoid(),
             value: '',
           },
           {
-            id: nanoid(8),
+            id: nanoid(),
             value: '',
           },
         ],
@@ -98,7 +98,7 @@ const NewPoll = () => {
       ...prevState,
       questions: prevState.questions.map((question, pos) => 
         pos === qPos
-          ? { ...question, options: [ ...question.options, { id: nanoid(8), value: '' } ] }
+          ? { ...question, options: [ ...question.options, { id: nanoid(), value: '' } ] }
           : { ...question }
       )
     }));
